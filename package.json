@@ -1,0 +1,41 @@
+{
+  "name": "limberjax",
+  "version": "0.1.0",
+  "description": "limberjax is a jQuery plugin that adds support for partial page loads with ajax while fully supporting URLs with `pushState`.",
+  "homepage": "https://github.com/0b10011/limberjax/",
+  "bugs": {
+    "url": "https://github.com/0b10011/limberjax/issues/",
+    "email": "brandon@19.codes"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Brandon Frohs",
+    "email": "brandon@19.codes",
+    "url": "http://19.codes"
+  },
+  "main": "src/limberjax.js",
+  "man": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/0b10011/limberjax.git"
+  },
+  "scripts": {
+    "start": "node ./test-data/app/bin/www",
+    "test": "node_modules/testcafe/bin/testcafe-with-v8-flag-filter.js chrome,firefox ./tests/ --app 'npm start'"
+  },
+  "devDependencies": {
+    "cookie-parser": "^1.4.3",
+    "debug": "^3.0.0",
+    "express": "^4.15.4",
+    "jquery": "^3.2.1",
+    "morgan": "^1.8.2",
+    "multer": "^1.3.0",
+    "nunjucks": "^3.0.1",
+    "testcafe": "^0.17.0",
+    "testcafe-browser-provider-nightmare": "0.0.4"
+  },
+  "peerDependencies": {
+    "jquery": "^3.2.1"
+  },
+  "private": true
+}
