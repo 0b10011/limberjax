@@ -1,5 +1,7 @@
 # limberjax
 
+[![Build Status](https://travis-ci.org/0b10011/limberjax.svg?branch=master)](https://travis-ci.org/0b10011/limberjax)
+
 limberjax is a [jQuery](https://jquery.com/) plugin that adds support for partial page loads with ajax while fully supporting URLs with `pushState`.
 
 limberjax intercepts link clicks and form submits, submits them to your server via ajax, parses the response, and replaces the appropriate parts of the existing page with the new content.
