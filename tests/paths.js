@@ -118,9 +118,9 @@ test('Forms', async (t) => {
     .expect(title.innerText).match(/^\/bar\?limberjax=[^&]+ \(text:foo;\)$/, "Submitted")
 
 		.setFilesToUpload(file_field, [
-			path.join(__dirname, "../README.md"),
-			path.join(__dirname, "../LICENSE")
+			path.join(__dirname, "../test-data/files/acid2.png"),
+			path.join(__dirname, "../test-data/files/amelia-earhart.txt")
 		])
 		.click(submit_input)
-    .expect(title.innerText).match(/^\/bar\?limberjax=[^&]+ \(text:foo;file:README\.md\|7bit\|text\/x-markdown\|1125;file:LICENSE\|7bit\|application\/octet-stream\|1070;\)$/, "Submitted")
+    .expect(title.innerText).match(/^\/bar\?limberjax=[^&]+ \(text:foo;file:acid2.png\|7bit\|image\/png\|1253;file:amelia-earhart.txt\|7bit\|text\/plain\|238;\)$/, "Submitted")
 });
