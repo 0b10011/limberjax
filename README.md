@@ -4,6 +4,8 @@
 
 limberjax is a [jQuery](https://jquery.com/) plugin that adds support for partial page loads with ajax while fully supporting URLs with `pushState`.
 
+**Warning:** limberjax is not quite ready for production. Some things are still broken/untested (eg, 404/500 errors), and this code will change/break quite a bit before release.
+
 limberjax intercepts link clicks and form submits, submits them to your server via ajax, parses the response, and replaces the appropriate parts of the existing page with the new content.
 
 Benefits:
