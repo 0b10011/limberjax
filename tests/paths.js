@@ -8,6 +8,7 @@ const input = Selector('input[name=link]');
 const mode_input = Selector('input[name=mode]');
 const container_input = Selector('input[name=container]');
 const method_input = Selector('input[name=method]');
+const version_input = Selector('input[name=version]');
 const link = Selector('a#main-link');
 const forward_link = Selector('a#forward-link');
 const back_link = Selector('a#back-link');
@@ -123,4 +124,25 @@ test('Forms', async (t) => {
 		])
 		.click(submit_input)
     .expect(title.innerText).match(/^\/bar\?limberjax=[^&]+ \(text:foo;file:acid2.png\|7bit\|image\/png\|1253;file:amelia-earhart.txt\|7bit\|text\/plain\|238;\)$/, "Submitted")
+});
+
+test('Version', async (t) => {
+	const submit = Selector("button[type=submit]");
+
+  await t
+		.navigateTo("/bad-version")
+		.typeText(input, "/foo?bar=baz", {replace: true})
+		.click(link)
+    .expect(title.innerText).eql("/foo?bar=baz", "Retried link")
+
+		.navigateTo("/bad-version")
+		.typeText(input, "/foo", {replace: true})
+		.click(submit)
+    .expect(title.innerText).eql("/foo?text=foo&file=", "Retried GET")
+
+		.navigateTo("/bad-version")
+		.typeText(input, "/foo", {replace: true})
+		.typeText(method_input, "post", {replace: true})
+		.click(submit)
+    .expect(title.innerText).eql("/foo (text:foo;)", "Retried POST")
 });

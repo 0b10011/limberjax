@@ -14,6 +14,7 @@
 	let disabled = false;
 	let main_container_selector;
 	let main_container;
+	let version;
 	const Limberjax = function (container_selector) {
 		// While limberjax shouldn't interfere with other code too much,
 		// it does rely on classes on the dom that are global
@@ -37,6 +38,8 @@
 
 		$.fn.Limberjax = this.watch;
 
+		version = $("meta[http-equiv='x-limberjax']").attr("content");
+
 		this.watchAll();
 		$(document).on("limberjax:success", function () {
 			window.Limberjax.watchAll();
@@ -56,7 +59,6 @@
 			"url": window.location.href
 		}), "", window.location.href);
 	};
-	let version;
 
 	const Request = function (options) {
 		if (!(this instanceof Request)) {
