@@ -21,7 +21,7 @@
   },
   "scripts": {
     "start": "node ./test-data/app/bin/www",
-    "test": "node_modules/testcafe/bin/testcafe-with-v8-flag-filter.js chrome,firefox ./tests/ --app 'npm start'"
+    "test": "node_modules/testcafe/bin/testcafe-with-v8-flag-filter.js ${BROWSERS:=chrome} ./tests/ --app 'npm start'"
   },
   "devDependencies": {
     "cookie-parser": "^1.4.3",

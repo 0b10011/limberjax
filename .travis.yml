@@ -1,5 +1,7 @@
 language: node_js
 node_js: "stable"
+env:
+  - BROWSERS=chrome,firefox
 
 before_install:
   - stty cols 80
