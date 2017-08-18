@@ -54,6 +54,8 @@
       'contents': $('<div/>').append($('body').contents().clone()),
       'feeds': undefined,
       'scripts': undefined,
+      'scrollLeft': $(window).scrollLeft(),
+      'scrollTop': $(window).scrollTop(),
       'styles': undefined,
       'title': document.title,
       'url': window.location.href
@@ -140,6 +142,13 @@
       trigger(options.target, 'outdated', [xhr, status, error])
     }
     function xhrSuccess (html, status, xhr) {
+      const currentState = parseState(window.history.state)
+      if (currentState.limberjax) {
+        currentState.scrollLeft = $(window).scrollLeft()
+        currentState.scrollTop = $(window).scrollTop()
+        window.history.replaceState(buildState(currentState))
+      }
+
       const redirect = xhr.getResponseHeader('X-Limberjax-Cross-Domain-Redirect')
       if (redirect) {
         window.location = redirect
@@ -325,6 +334,8 @@
       'contents': fromHtml(state.contents),
       'feeds': fromHtml(state.feeds),
       'scripts': fromHtml(state.scripts),
+      'scrollLeft': state.scrollLeft,
+      'scrollTop': state.scrollTop,
       'styles': fromHtml(state.styles),
       'title': state.title,
       'url': new URL(state.url)
@@ -345,6 +356,8 @@
       'contents': toHtml(data.contents),
       'feeds': toHtml(data.feeds),
       'scripts': toHtml(data.scripts),
+      'scrollLeft': data.scrollLeft,
+      'scrollTop': data.scrollTop,
       'styles': toHtml(data.styles),
       'title': data.title,
       'url': data.url.toString()
@@ -380,6 +393,9 @@
         state.contents.contents().insertAfter(container)
         break
     }
+
+    $(window).scrollLeft(state.scrollLeft)
+    $(window).scrollTop(state.scrollTop)
   }
   function popstate (event) {
     const rawState = event.originalEvent.state
