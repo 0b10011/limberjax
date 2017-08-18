@@ -47,6 +47,8 @@
 
     $(window).on('popstate.limberjax', popstate)
 
+    window.history.scrollRestoration = 'manual'
+
     window.history.replaceState(buildState({
       'parents': [],
       'mode': 'replace-inner',
@@ -77,6 +79,8 @@
         'contents': undefined,
         'feeds': undefined,
         'scripts': undefined,
+        'scrollLeft': 0,
+        'scrollTop': 0,
         'styles': undefined,
         'title': undefined,
         'url': providedData.url
@@ -142,11 +146,12 @@
       trigger(options.target, 'outdated', [xhr, status, error])
     }
     function xhrSuccess (html, status, xhr) {
-      const currentState = parseState(window.history.state)
+      let currentState = window.history.state
       if (currentState.limberjax) {
+        currentState = parseState(currentState)
         currentState.scrollLeft = $(window).scrollLeft()
         currentState.scrollTop = $(window).scrollTop()
-        window.history.replaceState(buildState(currentState))
+        window.history.replaceState(buildState(currentState), '', currentState.url.toString())
       }
 
       const redirect = xhr.getResponseHeader('X-Limberjax-Cross-Domain-Redirect')
@@ -269,7 +274,6 @@
     )) {
       throw new Error('Data must be undefined or an instance of FormData for POST requests and Array for GET requests')
     }
-    console.log(options.data)
 
     // Add limberjax version to url.
     // This forces the browser to cache it separately from other responses
