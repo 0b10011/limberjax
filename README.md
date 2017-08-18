@@ -1,6 +1,6 @@
 # limberjax
 
-[![Build Status](https://travis-ci.org/0b10011/limberjax.svg?branch=master)](https://travis-ci.org/0b10011/limberjax) [![NPM version](https://badge.fury.io/js/limberjax.png)](http://badge.fury.io/js/limberjax)
+[![Build Status](https://travis-ci.org/0b10011/limberjax.svg?branch=master)](https://travis-ci.org/0b10011/limberjax) [![NPM version](https://badge.fury.io/js/limberjax.png)](http://badge.fury.io/js/limberjax) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 limberjax is a [jQuery](https://jquery.com/) plugin that adds support for partial page loads with ajax while fully supporting URLs with `pushState`.
 
