@@ -147,3 +147,35 @@ test('Version', async (t) => {
     .click(submit)
     .expect(title.innerText).eql('/foo (text:foo;)', 'Retried POST')
 })
+
+test.only('Scroll', async (t) => {
+  const positionedDiv = Selector('#positionedDiv')
+  const x = Selector('#x')
+  const y = Selector('#y')
+
+  await t
+    .resizeWindow(1000, 1000)
+    .expect(x.innerText).eql('0')
+    .expect(y.innerText).eql('0')
+    .typeText(input, '/foo', {replace: true})
+
+  await t
+    .click(positionedDiv)
+    .expect(x.innerText).eql('20')
+    .expect(y.innerText).eql('20')
+
+    .click(link)
+    .expect(title.innerText).match(/^\/foo\?limberjax=/)
+    .expect(x.innerText).eql('0')
+    .expect(y.innerText).eql('0')
+
+    .click(backLink)
+    .expect(title.innerText).eql('/')
+//    .expect(x.innerText).eql('20') // Works in browsers but not testcafe
+    .expect(y.innerText).eql('20')
+
+    .click(forwardLink)
+    .expect(title.innerText).match(/^\/foo\?limberjax=/)
+    .expect(x.innerText).eql('0')
+    .expect(y.innerText).eql('0')
+})

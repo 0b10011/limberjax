@@ -4,11 +4,29 @@
 		<meta charset="utf-8">
 		<title>{{ title }}</title>
 		<meta http-equiv="x-limberjax" content="{{ version }}">
+    <style type="text/css">
+      html {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        margin: 0;
+        padding: 20px;
+      }
+      #positionedDiv {
+        position: absolute;
+        left: calc(100% + 10px);
+        top: calc(100% + 10px);
+        width: 10px;
+        height: 10px;
+      }
+    </style>
 		<script src="/jquery.js" defer></script>
 		<script src="/limberjax.js" defer></script>
 		<script src="/link-updater.js" defer></script>
 	</head>
 	<body>
+    <div id="positionedDiv"></div>
 		<nav>
 			<p><label>Link: <input name="link" value=""></label></p>
 			<p><label>Mode: <input name="mode" value=""></label></p>
@@ -26,6 +44,8 @@
 				</fieldset>
 			</form>
 		</nav>
+    <div id="x"></div>
+    <div id="y"></div>
 
 		<main id="layout-main">
 			{% block content %}

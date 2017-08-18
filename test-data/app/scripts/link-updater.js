@@ -21,4 +21,12 @@
   }
   $(init)
   $(document).on('limberjax:success', init)
+
+  function scrollPos () {
+    $('#x').text(window.scrollX)
+    $('#y').text(window.scrollY)
+  }
+  $(scrollPos)
+  $(document).on('limberjax:success', scrollPos)
+  $(window).on('scroll', scrollPos)
 }(jQuery))
