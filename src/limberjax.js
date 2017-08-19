@@ -51,7 +51,7 @@
 
     window.history.replaceState(buildState({
       'parents': [],
-      'mode': 'replace-inner',
+      'mode': 'replace',
       'containerSelector': 'body',
       'contents': $('<div/>').append($('body').contents().clone()),
       'feeds': undefined,
@@ -88,9 +88,9 @@
       providedData = undefined // Avoid accidentally using this instead of `data`
 
       // If this request does something
-      // other than replace-inner on the main container,
+      // other than replace on the main container,
       // add the current state as a parent state.
-      if (mainContainerSelector !== data.containerSelector || data.mode !== 'replace-inner') {
+      if (mainContainerSelector !== data.containerSelector || data.mode !== 'replace') {
         const currentState = window.history.state
         $.each(currentState.parents, function () {
           data.parents.push(parseState(this))
@@ -194,11 +194,9 @@
       'url': undefined,
 
       // How the fetched content will be inserted into the document.
-      // - "replace-inner": Replaces the contents of the container
-      // - "replace-outer": Replaces the container
-      // - "append-before": Inserted before the container
-      // - "append-after": Inserted after the container
-      'mode': 'replace-inner',
+      // - "replace": Replaces the contents of the container
+      // - "append": Appended to the end of the container
+      'mode': 'replace',
 
       // Target for fetched content to be inserted in relation to.
       // See `option.mode` for more information.
@@ -256,10 +254,8 @@
       throw new Error('No url provided')
     }
     switch (options.mode) {
-      case 'append-before':
-      case 'append-after':
-      case 'replace-inner':
-      case 'replace-outer':
+      case 'append':
+      case 'replace':
         break
       default:
         throw new Error('Invalid mode `' + options.mode + '`')
@@ -384,17 +380,11 @@
     document.title = state.title || ''
 
     switch (state.mode) {
-      case 'replace-inner':
+      case 'replace':
         container.html(toHtml(state.contents.contents()))
         break
-      case 'replace-outer':
-        container.replaceWith(toHtml(state.contents))
-        break
-      case 'append-before':
-        state.contents.contents().insertBefore(container)
-        break
-      case 'append-after':
-        state.contents.contents().insertAfter(container)
+      case 'append':
+        container.append(state.contents.contents())
         break
     }
 
@@ -447,7 +437,6 @@
 
     // Set options
     options.mode = $link.data('limberjax-mode') || undefined
-    options.containerSelector = $link.data('limberjax-container') || undefined
     options.url = $link.attr('href')
     options.target = $link
 
@@ -499,7 +488,6 @@
 
     // Set options
     options.mode = $form.data('limberjax-mode') || undefined
-    options.containerSelector = $form.data('limberjax-container') || undefined
     options.url = url.toString()
     options.target = $form
     options.data = options.method === 'POST' ? new FormData(form) : $(form).serializeArray()

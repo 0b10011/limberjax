@@ -8,7 +8,6 @@ const path = require('path')
 const title = Selector('h1')
 const input = Selector('input[name=link]')
 const modeInput = Selector('input[name=mode]')
-const containerInput = Selector('input[name=container]')
 const methodInput = Selector('input[name=method]')
 const link = Selector('a#main-link')
 const forwardLink = Selector('a#forward-link')
@@ -83,23 +82,28 @@ test('History', async (t) => {
 })
 
 test('Container', async (t) => {
-  const innerWrapper = Selector('#inner-wrapper')
-  const innerContainer = Selector('#inner-container')
+  const secondTitle = Selector('h1:nth-of-type(2)')
+  const thirdTitle = Selector('h1:nth-of-type(3)')
   await t
     .expect(title.innerText).eql('/')
 
-    .typeText(input, '/foo', {replace: true})
-    .typeText(containerInput, '#inner-container', {replace: true})
-    .click(link)
-    .expect(title.innerText).eql('/')
-    .expect(innerContainer.child('h1').innerText).match(/^#inner-container: \/foo\?limberjax=/, 'Appended')
-
     .typeText(input, '/bar', {replace: true})
-    .typeText(modeInput, 'append-after', {replace: true})
+    .typeText(modeInput, 'append', {replace: true})
     .click(link)
     .expect(title.innerText).eql('/')
-    .expect(innerContainer.child('h1').innerText).match(/^#inner-container: \/foo\?limberjax=/, 'Appended')
-    .expect(innerWrapper.child('h1').innerText).match(/^#inner-container: \/bar\?limberjax=/, 'Appended')
+    .expect(secondTitle.innerText).match(/^\/bar\?limberjax=/, 'Appended')
+
+    .typeText(input, '/baz', {replace: true})
+    .typeText(modeInput, 'append', {replace: true})
+    .click(link)
+    .expect(title.innerText).eql('/')
+    .expect(secondTitle.innerText).match(/^\/bar\?limberjax=/, 'Appended')
+    .expect(thirdTitle.innerText).match(/^\/baz\?limberjax=/, 'Appended')
+
+    .typeText(input, '/qux', {replace: true})
+    .typeText(modeInput, 'replace', {replace: true})
+    .click(link)
+    .expect(title.innerText).match(/^\/qux\?limberjax=/, 'Replaced')
 })
 
 test('Forms', async (t) => {
@@ -148,7 +152,7 @@ test('Version', async (t) => {
     .expect(title.innerText).eql('/foo (text:foo;)', 'Retried POST')
 })
 
-test.only('Scroll', async (t) => {
+test('Scroll', async (t) => {
   const positionedDiv = Selector('#positionedDiv')
   const x = Selector('#x')
   const y = Selector('#y')
