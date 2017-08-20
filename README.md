@@ -20,3 +20,9 @@ This will let you immediately see the majority of the benefits of limberjax on t
 1. Save [limberjax.js](https://github.com/0b10011/limberjax/blob/master/src/limberjax.js) to your project (minify/uglify to your liking)
 2. Add `new jQuery.Limberjax("#your-content-wrapper");` to your code
 3. On the server, return HTTP response code `412 Precondition Failed` if the `limberjax` query parameter's value does not equal the version on the server (this is *your* code's version, not limberjax's; a git commit id works well)
+
+## Notes
+
+- Character encoding should be set with `<meta charset="ENCODING">` on initial page load and all documents that will be requested with limberjax must use the same encoding
+- External scripts will only be loaded once per unique `src` + `type` combination
+- External stylesheets will only be loaded once per unique `href` + `media` combination

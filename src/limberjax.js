@@ -54,12 +54,11 @@
       'mode': 'replace',
       'containerSelector': 'body',
       'contents': $('<div/>').append($('body').contents().clone()),
-      'feeds': undefined,
       'scripts': undefined,
       'scrollLeft': $(window).scrollLeft(),
       'scrollTop': $(window).scrollTop(),
       'styles': undefined,
-      'title': document.title,
+      'title': $('title').first(),
       'url': window.location.href
     }), '', window.location.href)
   }
@@ -75,9 +74,11 @@
       let data = {
         'parents': [],
         'mode': providedData.mode,
+        'base': undefined,
         'containerSelector': providedData.containerSelector,
         'contents': undefined,
-        'feeds': undefined,
+        'links': undefined,
+        'meta': undefined,
         'scripts': undefined,
         'scrollLeft': 0,
         'scrollTop': 0,
@@ -105,23 +106,28 @@
 
         let head = fromHtml(html.match(/<head[^>]*>([\s\S.]*)<\/head>/i)[0])
 
-        // Set title
-        data.title = findAll(head, 'title').last().text()
+        // Get allowed <head> elements
+        // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/head
+        data.title = head.filter('title').first()
+        data.base = head.filter('base').first()
+        data.links = head.filter('link[rel="stylesheet"][type]:not([type="text/css"])')
+        data.meta = head.filter('meta:not([charset])')
+        data.scripts = head.filter('script[src]')
+        data.styles = head.filter('link[rel="stylesheet"]:not([type]), link[rel="stylesheet"][type="text/css"]')
 
-        // Get feeds
-        data.feeds = findAll(head, 'link[type="application/rss+xml"], link[type="application/atom+xml"]')
-
-        // Get scripts
-        data.scripts = findAll(head, 'script[src]')
-        findAll(head, 'script:not([src])').each(function () {
-          console.error(
-            'Inline script found in PJAX <head>. Must add directly to PJAX template.',
+        // Warn about
+        head.filter('script:not([src])').each(function () {
+          console.warn(
+            'Inline script found in <head>. Must add to limberjax.mainContainer\'s element for it to be executed.',
             this.textContent.split('\n')
           )
         })
-
-        // Get styles
-        data.styles = findAll(head, 'link[rel="stylesheet"][type="text/css"], link[rel="stylesheet"]:not([type])')
+        head.filter('style').each(function () {
+          console.warn(
+            'Inline stylesheet found in <head>. Must add to limberjax.mainContainer\'s element for it to be used.',
+            this.textContent.split('\n')
+          )
+        })
       } else {
         html = fromHtml(html)
         data.contents = findAll(fromHtml(html), data.containerSelector)
@@ -330,14 +336,16 @@
     return {
       'parents': parents,
       'mode': state.mode,
+      'base': fromHtml(state.base),
       'containerSelector': state.containerSelector,
       'contents': fromHtml(state.contents),
-      'feeds': fromHtml(state.feeds),
+      'links': fromHtml(state.links),
+      'meta': fromHtml(state.meta),
       'scripts': fromHtml(state.scripts),
       'scrollLeft': state.scrollLeft,
       'scrollTop': state.scrollTop,
       'styles': fromHtml(state.styles),
-      'title': state.title,
+      'title': fromHtml(state.title),
       'url': new URL(state.url)
     }
   }
@@ -352,14 +360,16 @@
       'limberjax': true,
       'parents': parents,
       'mode': data.mode,
+      'base': toHtml(data.base),
       'containerSelector': data.containerSelector,
       'contents': toHtml(data.contents),
-      'feeds': toHtml(data.feeds),
+      'links': toHtml(data.links),
+      'meta': toHtml(data.meta),
       'scripts': toHtml(data.scripts),
       'scrollLeft': data.scrollLeft,
       'scrollTop': data.scrollTop,
       'styles': toHtml(data.styles),
-      'title': data.title,
+      'title': toHtml(data.title),
       'url': data.url.toString()
     }
   }
@@ -377,7 +387,46 @@
       parentsNeedLoading: parentsNeedLoading
     })
 
-    document.title = state.title || ''
+    // Remove head elements from previous page
+    $('head').find('title, base, link[rel="stylesheet"][type]:not([type="text/css"]), meta:not([charset])').remove()
+
+    // Add head elements for new page
+    $('head').append(
+      state.title,
+      state.base,
+      state.links,
+      state.meta
+    )
+
+    // Loop through scripts and add new ones
+    const existingScripts = $('script[src]')
+    state.scripts.each(function () {
+      const newScript = $(this)
+
+      var matchedScripts = existingScripts.filter(function () {
+        const existingScript = $(this)
+        return existingScript.attr('src') === newScript.attr('src') &&
+          existingScript.attr('type') === newScript.attr('type')
+      })
+      if (matchedScripts.length) return
+
+      $('head').append(newScript)
+    })
+
+    // Loop through styles and add new ones
+    const existingStyles = $('link[rel="stylesheet"][type="text/css"], link[rel="stylesheet"]:not([type])')
+    state.styles.each(function () {
+      const newStyle = $(this)
+
+      var matchedStyles = existingStyles.filter(function () {
+        const existingStyle = $(this)
+        return existingStyle.attr('href') === newStyle.attr('href') &&
+          existingStyle.attr('media') === newStyle.attr('media')
+      })
+      if (matchedStyles.length) return
+
+      $('head').append(newStyle)
+    })
 
     switch (state.mode) {
       case 'replace':
